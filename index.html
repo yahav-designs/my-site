@@ -125,11 +125,6 @@ footer{padding:44px 0 60px;text-align:center;color:var(--mute);border-top:1px so
     <p class="lead">העיצובים שלי, בגודל ובאיכות המקוריים. לחצו על תמונה כדי לצפות בה בגדול.</p>
     <div class="tabs" id="tabs" role="group" aria-label="סינון לפי קטגוריה"></div>
     <div class="gal" id="gal"></div>
-    <div class="upload">
-      <p><b>העלאת עיצובים (לבעל האתר):</b> בחרו קטגוריה וקבצי תמונה והם יופיעו בגלריה. ההעלאה נשמרת בדפדפן הזה בלבד ונעלמת ברענון. כדי שהעבודות יישארו קבועות לכל המבקרים, שלחו לי את הקבצים ואטמיע אותם באתר.</p>
-      <select id="upcat" aria-label="קטגוריה להעלאה"></select>
-      <input id="upfile" type="file" accept="image/*" multiple aria-label="בחירת תמונות" style="width:auto">
-    </div>
   </div></section>
 
   <section class="wrap" id="process">
@@ -212,11 +207,10 @@ addEventListener('hashchange',route);route();
 
 /* גלריה */
 const works=[]; let active="הכול";
-const tabs=document.getElementById('tabs'),gal=document.getElementById('gal'),up=document.getElementById('upcat');
+const tabs=document.getElementById('tabs'),gal=document.getElementById('gal');
 ["הכול",...CONFIG.categories].forEach(c=>{
   const b=document.createElement('button');b.className='tab';b.textContent=c;b.onclick=()=>{active=c;draw()};tabs.append(b);
 });
-CONFIG.categories.forEach(c=>up.add(new Option(c,c)));
 function draw(){
   [...tabs.children].forEach(b=>b.setAttribute('aria-pressed',b.textContent===active));
   gal.innerHTML="";
@@ -225,12 +219,8 @@ function draw(){
     const b=document.createElement('div');b.className='item';b.tabIndex=0;b.innerHTML=`<img alt="עיצוב בקטגוריית ${w.cat}"><span class="tag">${w.cat}</span><button class="del" aria-label="מחיקת העיצוב">מחיקה ✕</button>`;
     b.firstChild.src=w.src;b.onclick=()=>{lbi.src=w.src;lb.classList.add('on')};b.onkeydown=e=>{if(e.key==='Enter')b.click()};b.querySelector('.del').onclick=e=>{e.stopPropagation();works.splice(works.indexOf(w),1);URL.revokeObjectURL(w.src);draw()};gal.append(b);
   });
-  if(!list.length){const p=document.createElement('div');p.className='item ph';p.textContent='עדיין אין עבודות בקטגוריה הזו. העלו עיצובים בעזרת הכפתור למטה.';gal.append(p)}
+  if(!list.length){const p=document.createElement('div');p.className='item ph';p.textContent='עבודות חדשות בקטגוריה הזו יתווספו בקרוב.';gal.append(p)}
 }
-document.getElementById('upfile').addEventListener('change',e=>{
-  [...e.target.files].forEach(f=>works.push({src:URL.createObjectURL(f),cat:up.value}));
-  active=up.value;draw();e.target.value="";
-});
 const lb=document.getElementById('lb'),lbi=document.getElementById('lbi');
 lb.onclick=e=>{if(e.target!==lbi)lb.classList.remove('on')};
 addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('on')});
